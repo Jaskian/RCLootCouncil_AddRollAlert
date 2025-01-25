@@ -13,11 +13,15 @@ jobs:
       # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v2
-
+      # extract tag name
       - name: Extract tag name
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV  # Set the tag name as an environment variable for later use
+      # create publish dir
+      - name: Create a new directory
+        run: |
+          mkdir -p publish
       # Create a zip file of the repository
       - name: Zip the repository contents
         run: |
