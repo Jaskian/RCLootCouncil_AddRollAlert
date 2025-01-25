@@ -4,34 +4,40 @@ on:
   push:
     tags:
       - 'v*'  # Trigger this workflow when a tag starting with 'v' is pushed
-  workflow_dispatch:  # Allow manual triggering of the workflow from the UI
+      
 jobs:
   release:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Extract the version number from the .toc file
-      - name: Extract version from .toc
-        id: extract_version
-        run: |
-          VERSION=$(grep -m 1 '^## Version:' RCLootCouncil_AddRollAlert.toc | awk -F ': ' '{print $2}')
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-
-      # Step 3: Create a zip file of the repository
+      # Create a zip file of the repository
       - name: Zip the repository contents
         run: |
-          zip -r "${GITHUB_WORKSPACE}/RCLootCouncil_AddRollAlert-${{ env.VERSION }}.zip" . -x "*.git/*" -x ".vscode/*"
+          zip -r "${GITHUB_WORKSPACE}/RCLootCouncil_AddRollAlert-${{ github.ref }}.zip" . -x "*.git/*" -x ".vscode/*" -x ".github/**/*"
           ls -l ${GITHUB_WORKSPACE}
-
-      # Step 4: Create a GitHub release
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+      # Create a release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          files: |
-            ${GITHUB_WORKSPACE}/RCLootCouncil_AddRollAlert-${{ env.VERSION }}.zip
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      # Attach zip to release 
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ${GITHUB_WORKSPACE}/RCLootCouncil_AddRollAlert-${{ github.ref }}.zip
+          asset_name: RCLootCouncil_AddRollAlert-${{ github.ref }}.zip
+          asset_content_type: application/zip
