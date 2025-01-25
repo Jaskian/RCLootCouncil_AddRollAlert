@@ -4,7 +4,7 @@ on:
   push:
     tags:
       - 'v*'  # Trigger this workflow when a tag starting with 'v' is pushed
-
+  workflow_dispatch:  # Allow manual triggering of the workflow from the UI
 jobs:
   release:
     runs-on: ubuntu-latest
