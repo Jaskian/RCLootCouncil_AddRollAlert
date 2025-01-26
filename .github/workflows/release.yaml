@@ -26,10 +26,12 @@ jobs:
       - name: Create a new directory
         run: |
           mkdir -p publish
-      # Create a zip file of the repository
       - name: Zip the repository contents
         run: |
-          zip -r "publish/RCLootCouncil_AddRollAlert-${{ env.TAG_NAME }}.zip" . -x "*.git/*" -x ".vscode/*" -x ".github/**/*"
+          cp -r * RCLootCouncil_AddRollAlert/
+          cp -r .[^.]* RCLootCouncil_AddRollAlert/
+                  # Create the zip file with the files inside the "temp_folder"
+          zip -r "publish/RCLootCouncil_AddRollAlert-${{ env.TAG_NAME }}.zip" RCLootCouncil_AddRollAlert/* -x "**/.*/*"
       # Create a release
       - name: Create Release
         id: create_release
