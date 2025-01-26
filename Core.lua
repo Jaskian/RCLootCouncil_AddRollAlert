@@ -110,11 +110,5 @@ local function onCommReceived(prefix, message, distribution, sender)
 end
 
 function RCLootCouncil_RollAlerts:OnInitialize()
-    local responseInfo = RCLootCouncil:GetResponse(nil, 1)
-
-    for x, y in pairs(responseInfo) do
-        print(x .. " " .. tostring(y))
-    end
-
     AceComm:RegisterComm("RCLootCouncil", onCommReceived)
 end
