@@ -29,7 +29,8 @@ jobs:
           mkdir -p publish/RCLootCouncil_AddRollAlert
       - name: Zip the repository contents
         run: |
-          cp -r * publish/RCLootCouncil_AddRollAlert/                
+          # Use rsync to copy all contents, excluding the 'publish' folder and dot folders
+          rsync -av --exclude='publish/' --exclude='.*' ./ publish/RCLootCouncil_AddRollAlert/            
           zip -r "publish/RCLootCouncil_AddRollAlert-${{ env.TAG_NAME }}.zip" RCLootCouncil_AddRollAlert/* -x "**/.*/*"
       # Create a release
       - name: Create Release
