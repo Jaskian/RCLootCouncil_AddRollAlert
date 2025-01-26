@@ -22,10 +22,11 @@ jobs:
       - name: Perform string replacement in file
         run: |
           sed -i 's/{version}/${{ env.TAG_NAME }}/g' release.json
-      # create publish dir
+      # create temp dirs
       - name: Create a new directory
         run: |
           mkdir -p publish
+          mkdir -p RCLootCouncil_AddRollAlert
       - name: Zip the repository contents
         run: |
           cp -r * RCLootCouncil_AddRollAlert/
