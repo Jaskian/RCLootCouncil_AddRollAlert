@@ -26,12 +26,10 @@ jobs:
       - name: Create a new directory
         run: |
           mkdir -p publish
-          mkdir -p RCLootCouncil_AddRollAlert
+          mkdir -p publish/RCLootCouncil_AddRollAlert
       - name: Zip the repository contents
         run: |
-          cp -r * RCLootCouncil_AddRollAlert/
-          cp -r .[^.]* RCLootCouncil_AddRollAlert/
-                  # Create the zip file with the files inside the "temp_folder"
+          cp -r * publish/RCLootCouncil_AddRollAlert/                
           zip -r "publish/RCLootCouncil_AddRollAlert-${{ env.TAG_NAME }}.zip" RCLootCouncil_AddRollAlert/* -x "**/.*/*"
       # Create a release
       - name: Create Release
