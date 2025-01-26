@@ -84,10 +84,9 @@ local function OnRRollsReceived(session, ...)
 
     local responseText = RCLootCouncil:GetResponse(nil, lowestResponse)["text"]
     local missingRolls = false
-    for candidate in filteredCandidates do
+    for _,candidate in pairs(filteredCandidates) do
         if not candidate.roll then
             output("Missing auto-roll from " .. candidate.name .. " for " .. lootTable[session].link)
-            SendChatMessage("Please /roll 100 manually!", "WHISPER", nil, candidate.name)
             missingRolls = true
         end
     end
