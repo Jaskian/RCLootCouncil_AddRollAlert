@@ -25,7 +25,9 @@ local function output(message)
 end
 
 local function setChatChannel()
-    if IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
+    if not IsInGroup() then
+        channel = "SAY"
+    elseif IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
         channel = "RAID_WARNING"
     elseif IsInRaid() then
         channel = "RAID"
@@ -80,10 +82,23 @@ local function OnRRollsReceived(session, ...)
         end
     end
 
+    local responseText = RCLootCouncil:GetResponse(nil, lowestResponse)["text"]
+    local missingRolls = false
+    for candidate in filteredCandidates do
+        if not candidate.roll then
+            output("Missing auto-roll from " .. candidate.name .. " for " .. lootTable[session].link)
+            missingRolls = true
+        end
+    end
+
+    if missingRolls then
+        output("Please roll manually!")
+        return
+    end
+
     -- Sort candidates by roll number in descending order
     table.sort(filteredCandidates, reversedSort)
-    
-    local responseText = RCLootCouncil:GetResponse(nil, lowestResponse)["text"]
+
     output("Top " .. responseText .. " rolls for: " .. lootTable[session].link)
 
     -- Print out only the top 3 candidates
@@ -104,7 +119,7 @@ local function onCommReceived(prefix, message, distribution, sender)
     if command ~= "rrolls" then return end
 
     -- wait for the UI to update first as we'll be pulling from the UI frame data
-    C_Timer.After(0.1, function()
+    C_Timer.After(1.1, function()
         OnRRollsReceived(unpack(data))
     end)
 end
