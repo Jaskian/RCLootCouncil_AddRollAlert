@@ -87,6 +87,7 @@ local function OnRRollsReceived(session, ...)
     for candidate in filteredCandidates do
         if not candidate.roll then
             output("Missing auto-roll from " .. candidate.name .. " for " .. lootTable[session].link)
+            SendChatMessage("Please /roll 100 manually!", "WHISPER", nil, candidate.name)
             missingRolls = true
         end
     end
